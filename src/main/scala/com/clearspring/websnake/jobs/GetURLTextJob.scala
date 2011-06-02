@@ -31,8 +31,14 @@ class GetURLTextJob(url: String, outDir: String) extends GridJobAdapterEx
     }
     catch
     {
-      case e: IOException => e.printStackTrace()
-      ""
+      case e: IOException => {
+        e.printStackTrace()
+        ""
+      }
+      case e: StringIndexOutOfBoundsException => {
+        println("Caught SIOOBE url: <" + url + ">")
+        ""
+      }
     }
   }
 }

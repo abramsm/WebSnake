@@ -8,12 +8,14 @@ import com.clearspring.websnake.jobs.GetURLTextJob
 import org.gridgain.grid.{GridJobResult, GridTaskSplitAdapter, GridJob}
 import scala.collection.JavaConversions._
 
-class GetURLTextTask extends GridTaskSplitAdapter[String, String] {
-  def split(gridSize: Int, urlFile: String) = {
-    val file = new File(urlFile)
-    val outDir = file.getName()
+class GetURLTextTask extends GridTaskSplitAdapter[GetURLTextTaskParams, String] {
+  def split(gridSize: Int, params: GetURLTextTaskParams) = {
+    val baseDir = params.getBaseDir()
+    val file = new File(params.getURLFile())
+    val outDir = baseDir + File.separator + file.getName()
+    
     val jobs: List[GridJob] = new ArrayList[GridJob]()
-    val urls = scala.io.Source.fromFile(urlFile).mkString.split('\n');
+    val urls = scala.io.Source.fromFile(params.getURLFile()).mkString.split('\n');
     for (url <- urls) {
       val job: GridJob = new GetURLTextJob(url, outDir)
       jobs.add(job)
@@ -22,6 +24,7 @@ class GetURLTextTask extends GridTaskSplitAdapter[String, String] {
   }
 
   def reduce(results: List[GridJobResult]) = {
+    println("Beginning reduce...")
     for (result <- results) {
       val job: GetURLTextJob = result.getJob()
       val data: String = result.getData()
