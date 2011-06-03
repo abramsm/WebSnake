@@ -28,7 +28,9 @@ class GetURLTextTask extends GridTaskSplitAdapter[GetURLTextTaskParams, String] 
     for (result <- results) {
       val job: GetURLTextJob = result.getJob()
       val data: String = result.getData()
-      printToFile(job.getOutDir(), job.getURL(), data.toString.replace("\n", " "))
+      if (!data.equals("")) {
+        printToFile(job.getOutDir(), job.getURL(), data.toString.replace("\n", " "))
+      }
     }
     ""
   }

@@ -3,6 +3,7 @@ package com.clearspring.websnake.jobs
 import org.gridgain.grid.GridJobAdapterEx
 import org.htmlparser.beans.StringBean
 import java.io.IOException
+import com.clearspring.websnake.app.Util
 
 class GetURLTextJob(url: String, outDir: String) extends GridJobAdapterEx
 {
@@ -27,7 +28,13 @@ class GetURLTextJob(url: String, outDir: String) extends GridJobAdapterEx
       sb.setCollapse(true);
       sb.setURL(url)
       val strings = sb.getStrings
-      url + ":::" + strings
+
+      var ret = ""
+      if (Util.isAscii(strings)) {
+        ret = url + ":::" +
+      }
+
+      ret
     }
     catch
     {
@@ -37,6 +44,10 @@ class GetURLTextJob(url: String, outDir: String) extends GridJobAdapterEx
       }
       case e: StringIndexOutOfBoundsException => {
         println("Caught SIOOBE url: <" + url + ">")
+        ""
+      }
+      case e => {
+        e.printStackTrace()
         ""
       }
     }
